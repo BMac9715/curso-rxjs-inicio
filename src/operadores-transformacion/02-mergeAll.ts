@@ -1,6 +1,5 @@
-import { debounceTime, fromEvent, map, mergeAll, Observable, pluck } from "rxjs";
+import { debounceTime, fromEvent, map, mergeAll, pluck } from "rxjs";
 import { ajax } from "rxjs/ajax";
-import { GithubUser, GithubUsers } from "./interfaces/github-users";
 
 /**
  * Referencias en HTML
@@ -17,30 +16,6 @@ body.append(textInput, orderList);
 
 const url = 'https://api.github.com';
 const input$ = fromEvent<KeyboardEvent>(textInput, 'keyup');
-
-/**
- * Helpers
- */
-
-const mostrarUsuarios = (usuarios: GithubUser[]) => {
-    orderList.innerHTML = '';
-    for (const usuario of usuarios) {
-        const li = document.createElement('li');
-        const img = document.createElement('img');
-        img.src = usuario.avatar_url;
-
-        const anchor = document.createElement('a');
-        anchor.text = 'Ver página';
-        anchor.href = usuario.html_url;
-        anchor.target = '_blank';
-
-        li.append(img);
-        li.append(usuario.login + ' ');
-        li.append(anchor);
-
-        orderList.append(li);
-    }
-}
 
 //input$.pipe(
 //    debounceTime(500),
@@ -70,12 +45,12 @@ const mostrarUsuarios = (usuarios: GithubUser[]) => {
 
 input$.pipe(
     debounceTime(500),
-    map<KeyboardEvent, string>(x => x?.target['value']),
-    map<string, Observable<GithubUsers>>(text => ajax.getJSON(`${url}/search/users?q=${text}`)),
-    mergeAll<Observable<GithubUsers>>(),
-    map<GithubUsers, GithubUser[]>(({items}) => items)
+    map(x => x?.target['value']),
+    map(text => ajax.getJSON(`${url}/search/users?q=${text}`)),
+    mergeAll(),
+    pluck('items')
 ).subscribe(
-    users => {
-        mostrarUsuarios(users);
+    resp => {
+        console.log(resp)
     }
 );

@@ -1,6 +1,6 @@
 import { debounceTime, fromEvent, map, mergeAll, Observable, pluck } from "rxjs";
 import { ajax } from "rxjs/ajax";
-import { GithubUser, GithubUsers } from "./interfaces/github-users";
+import { GithubUser, GithubUsers } from "../interfaces/github-users";
 
 /**
  * Referencias en HTML
